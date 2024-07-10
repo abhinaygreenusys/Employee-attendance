@@ -2,6 +2,7 @@ import { Admin } from "../../models/admin.model.js";
 import { uploadFile } from "../../utils/s3.utils.js";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt"
 const routes = {};
 
 routes.register = async (req, res) => {
@@ -47,7 +48,9 @@ routes.register = async (req, res) => {
   //   res.json("admin-register");
 };
 
-routes.verifyOtp = async (req, res) => {};
+// routes.verifyOtp = async (req, res) => {
+      
+// };
 
 routes.login = async (req, res) => {
   try {
@@ -60,7 +63,8 @@ routes.login = async (req, res) => {
 
     if (!user) return res.status(404).json({ error: "Invalid credential" });
 
-    const isPasswordValid = user.isPasswordCorrect(password);
+    const isPasswordValid = await user.isPasswordCorrect(password);
+    console.log("isPasswordValid=",isPasswordValid)
     if (!isPasswordValid)
       return res.status(404).json({ error: "Invalid credential" });
 
@@ -77,6 +81,28 @@ routes.login = async (req, res) => {
     console.log(error.message);
   }
 };
+
+
+  routes.forgotPassword=async(req,res)=>{
+    try{
+      const {email,password,confirmPassword}=req.body;
+      if(!email||!password||!confirmPassword)
+        return res.status(400).json({message:"All field Required"})
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const user=await Admin.findOneAndUpdate({email},{password:hashedPassword},{new:true});
+      if(!user)
+        return res.status(404).json({error:"User not found "})
+      
+      return res.status(200).json({result:user,message:"Password Update Successfully"})
+      
+    }  catch(error){
+         console.log("error=",error.message)
+         res.status(500).json({error:"Something went wrong"});
+    }
+      
+  }
 
 routes.refreshToken = async (req, res) => {
   try {
