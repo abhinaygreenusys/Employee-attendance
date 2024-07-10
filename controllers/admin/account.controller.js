@@ -60,7 +60,7 @@ routes.login = async (req, res) => {
 
     if (!user) return res.status(404).json({ error: "Invalid credential" });
 
-    const isPasswordValid = user.isPasswordCorrect(password);
+    const isPasswordValid = await  user.isPasswordCorrect(password);
     if (!isPasswordValid)
       return res.status(404).json({ error: "Invalid credential" });
 
