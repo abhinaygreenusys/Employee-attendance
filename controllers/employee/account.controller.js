@@ -17,7 +17,7 @@ routes.register = async (req, res) => {
     // if (emp) return res.status(400).json({ error: "Employee already exists" });
 
     // genrate otp and expire time
-    const otp = Math.floor(100000 + Math.random() * 999999);
+    const otp = Math.floor(100000 + Math.random() * 900000);
     const expiresIn = new Date().getTime() + 10 * 60 * 1000;
     
     // sent otp message
@@ -70,7 +70,7 @@ routes.login = async (req, res) => {
     if (!emp.isVerified)
       return res.status(400).json({ error: "Account not verified" });
     // const accessToken = emp.generateAccessToken();
-    const otp=Math.floor(100000+Math.random()*999999)
+    const otp=Math.floor(100000+Math.random()*900000)
     const expiresIn = new Date().getTime()+10*60*1000
     emp.verificationCode = otp;
     emp.codeExpire = expiresIn;
