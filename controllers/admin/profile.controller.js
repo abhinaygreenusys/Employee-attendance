@@ -21,7 +21,7 @@ routes.updateProfile = async (req, res) => {
 
     const user = await Admin.findByIdAndUpdate(id, req.body, { new: true });
 
-    if(req.files.length){
+    if(req.files?.length){
        const file = req.files[0];
        const deletePicture=await deleteFile(user.profilePicture);
        console.log("deletePicture=",deletePicture);
@@ -45,9 +45,12 @@ routes.updateProfile = async (req, res) => {
 };
 routes.dashBoard=async(req,res)=>{
     try{
-      const user=await Employee.find();
+      const {limit=10,page=1}=req.query
+
+      const user=await Employee.find().skip(limit*(page-1)).limit(limit);
+      const totalUser=await Employee.countDocuments();
       if(!user) res.status(404).json({error:"Have no user"})
-      res.status(200).json({result:user,message:"success"})
+      res.status(200).json({result:{user,totalUser},message:"success"})
     }catch(error){
       res.status(500).json({ error: "Something went wrong" });   
     }
