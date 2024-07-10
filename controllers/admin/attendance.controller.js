@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { Attendance } from "../../models/attendance.model.js";
 
 const routes = {};
-routes.getAttendanceByEmplyee = async (req, res) => {
+routes.getAttendanceHistoryByEmplyee = async (req, res) => {
   try {
     const { id } = req.params;
     const { limit = 10, page = 1 } = req.query;
@@ -14,36 +14,56 @@ routes.getAttendanceByEmplyee = async (req, res) => {
           employeeId: mongoose.Types.ObjectId(id),
         },
       },
-      {
-        $project: {
-          punchIn: { $toDate: "$punchIn.time" },
-          punchOut: { $toDate: "$punchOut.time" },
+      { 
+        $addFields: {
+          tempPunchIn: { $toDate: "$punchIn.time" },
+          tempPunchOut: { $toDate: "$punchOut.time" },
         },
       },
       {
         $addFields: {
           diff: {
             $abs: {
-              $subtract: ["$punchOut", "$punchIn"],
+              $subtract: ["$tempPunchOut", "$tempPunchIn"],
             },
           },
         },
       },
       {
         $addFields: {
-          hours: { $divide: ["$diff", 3600000] },
-          minute: { $divide: ["$diff", 60000] },
-          second: { $divide: ["$diff", 1000] },
+          hours: { $floor: { $divide: ["$diff", 3600000] } },
+          minute: { $floor: { $divide: ["$diff", 60000] } },
+          second: { $floor: { $divide: ["$diff", 1000] } },
         },
       },
       {
-        $switch: {
-          branches: [
-            {case:{$gt:["$hours",1]},then:"$hours"},
-            {case:{$gt:["$minute",1]},then:"$minute"},
-          ],
-          default: "$second",
+        $addFields: {
+          totalDuration: {
+            $switch: {
+              branches: [
+                {
+                  case: { $gt: ["$hours", 1] },
+                  then: { $concat: [{ $toString: "$hours" }, " hour"] },
+                },
+                {
+                  case: { $gt: ["$minute", 1] },
+                  then: { $concat: [{ $toString: "$minute" }, " minute"] },
+                },
+              ],
+              default: {$concat:[{$toString:"$second"}," second"]},
+            },
+          },
         },
+      },
+      {
+        $project:{
+          tempPunchIn:0,
+          tempPunchOut:0,
+          diff:0,
+          hours:0,
+          minute:0,
+          second:0,           
+        }
       },
       {
         $skip: +skipValue,
@@ -53,8 +73,7 @@ routes.getAttendanceByEmplyee = async (req, res) => {
       },
     ];
 
-    // const attendance = await Attendance.aggregate(pipeline);
-    const attendance=await Attendance.find({employeeId:id})
+    const attendance = await Attendance.aggregate(pipeline);
 
     const totalAttendance = await Attendance.countDocuments({ employeeId: id });
 
