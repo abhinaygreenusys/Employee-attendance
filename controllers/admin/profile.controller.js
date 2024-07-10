@@ -21,7 +21,7 @@ routes.updateProfile = async (req, res) => {
 
     const user = await Admin.findByIdAndUpdate(id, req.body, { new: true });
 
-    if(req.files.length){
+    if(req.files?.length){
        const file = req.files[0];
        const deletePicture=await deleteFile(user.profilePicture);
        console.log("deletePicture=",deletePicture);
