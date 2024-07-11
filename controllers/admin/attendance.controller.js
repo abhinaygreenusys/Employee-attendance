@@ -7,6 +7,9 @@ routes.getAttendanceHistoryByEmplyee = async (req, res) => {
     const { id } = req.params;
     const { limit = 10, page = 1 } = req.query;
     const skipValue = limit * (page - 1);
+         
+    if(!id) return res.status(400).json({error:"user id not found"})
+      
     console.log(skipValue);
     const pipeline = [
       {
