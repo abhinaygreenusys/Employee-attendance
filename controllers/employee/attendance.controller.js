@@ -58,8 +58,8 @@ routes.updateAttendance=async(req,res)=>{
                 const {time,latitude,longitude,address}=punchOut
                 if(!time || !latitude ||!longitude || !address)
                         return res.status(400).json({message:"All fields are required"})
-
-                const attendance=await Attendance.findOneAndUpdate({id,employeeId},{punchOut},{new:true})
+                console.log("id=",id);
+                const attendance=await Attendance.findOneAndUpdate({_id:id,employeeId},{punchOut},{new:true})
                 if(!attendance)
                         return res.status(404).json({message:"No Attendance Found"})
 

@@ -43,14 +43,14 @@ routes.getAttendanceHistoryByEmplyee = async (req, res) => {
               branches: [
                 {
                   case: { $gt: ["$hours", 1] },
-                  then: { $concat: [{ $toString: "$hours" }, " hour"] },
+                  then: { $concat: [{ $toString: "$hours" }, " hours"] },
                 },
                 {
                   case: { $gt: ["$minute", 1] },
-                  then: { $concat: [{ $toString: "$minute" }, " minute"] },
+                  then: { $concat: [{ $toString: "$minute" }, " minutes"] },
                 },
               ],
-              default: {$concat:[{$toString:"$second"}," second"]},
+              default: {$concat:[{$toString:"$second"}," seconds"]},
             },
           },
         },
@@ -77,25 +77,6 @@ routes.getAttendanceHistoryByEmplyee = async (req, res) => {
 
     const totalAttendance = await Attendance.countDocuments({ employeeId: id });
 
-    // const temp = attendance?.map((a, i) => {
-    //     const In=new Date(a.attendance?.punchIn?.time)
-    //     const Out=new Date(a.attendance?.punchOut?.time)
-    //     const diff = Math.abs(Out-In);
-    //    const hours=diff/1000/60/60
-    //    if(hours>1)
-    //     return hours
-
-    //    const minute=diff/1000/60
-    //    if(minute>1)
-    //     return minute;
-
-    //    const second=diff/1000
-    //      return second
-
-    // });
-
-    // console.log("temp"=temp);
-
     if (!attendance)
       return res.status(404).json({ error: "No attendance found" });
 
@@ -111,5 +92,26 @@ routes.getAttendanceHistoryByEmplyee = async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 };
+
+
+
+routes.getLetestAttendance=async(req,res)=>{
+      try{
+        const id = req.params.id;
+        const attendance=await Attendance.findOne({employeeId:id}).sort({createdAt:-1});
+        if(!attendance)
+          return res.status(404).json({error:"No attendance found"})
+
+        console.log(attendance)
+
+        res.status(200).json({result:attendance,message:"attendance fetched successfully"})
+      }catch(error){
+        console.log("error=",error.message);
+          res.status(500).json({error:"Something wend wrong"});
+      }
+}
+
+
+
 
 export default routes;
