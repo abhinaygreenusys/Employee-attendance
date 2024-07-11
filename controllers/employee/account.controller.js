@@ -76,7 +76,7 @@ routes.login = async (req, res) => {
     emp.codeExpire = expiresIn;
     await emp.save();
     sentMessage("9335133803", otp);
-    res.status(200).json({message:"sent otp successfully"})
+    res.status(200).json({result:emp,message:"sent otp successfully"})
   } catch (error) {
     console.log("error=", error.message);
     res.status(500).json({ error: "Something went worng" });
