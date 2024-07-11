@@ -47,7 +47,7 @@ routes.dashBoard=async(req,res)=>{
     try{
       const {limit=10,page=1}=req.query
 
-      const user=await Employee.find({},{name:1,employeeId:1,role:1}).skip(limit*(page-1)).limit(limit);
+      const user=await Employee.find({},{name:1,employeeId:1,role:1,phone:1}).skip(limit*(page-1)).limit(limit);
       const totalUser=await Employee.countDocuments();
       if(!user) res.status(404).json({error:"Have no user"})
       res.status(200).json({result:{user,totalUser},message:"success"})
