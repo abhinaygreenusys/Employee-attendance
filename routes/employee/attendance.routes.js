@@ -6,6 +6,6 @@ const router=express.Router();
 router.post("/",attendanceController.createAttendance)
       .get("/",attendanceController.getAllAttendance)
       .get("/:id",attendanceController.getAttendanceById)
-      .put("/:id",attendanceController.updateAttendance)
+      .patch("/:id",attendanceController.updateAttendance)
 
       export default router
