@@ -25,4 +25,29 @@ routes.getAllLeaveByEmployee = async (req, res) => {
   }
 };
 
-export default routes
+routes.updateLeaveByEmployee = async (req, res) => {
+  try {
+    const employeeId = req.params.id;
+    const { leaveId, leaveStatus } = req.body;
+    if (!employeeId)
+      return res.status(400).json({ error: "employee id required" });
+    if (!leaveId || !leaveStatus)
+      return res.status(400).json("All field required");
+    const leave = await leaveModel.findOneAndUpdate(
+      { _id: leaveId, employeeId },
+      { leaveStatus },{new:true}
+    );
+    if (!leave)
+      return res
+        .status(404)
+        .json({ error: "Leave not found with that employee Id" });
+    return res
+      .status(200)
+      .json({ result: leave, message: "Leave updated succesfully" });
+  } catch (error) {
+    console.log("error", error.message);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+};
+
+export default routes;
