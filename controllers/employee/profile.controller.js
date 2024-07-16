@@ -5,7 +5,14 @@ const routes = {};
 routes.getProfile = async (req, res) => {
   try {
     const id = req.userId;
-    const user = await Employee.findById(id);
+    const user = await Employee.findById(id, {
+      phone: 1,
+      email:1,
+      employeeId:1,
+      name:1,
+      role:1,
+      profilePicture:1,
+    });
     if (!user) return res.status(404).json({ error: "Employee not found" });
     res.status(200).json({ result: user, message: "success" });
   } catch (error) {
@@ -34,7 +41,6 @@ routes.updateProfile = async (req, res) => {
     let url;
     if (req.files?.length) {
       if (user.profilePicture) {
-        //   console.log(user.profilePicture);
         await deleteFile(user.profilePicture);
       }
 
@@ -57,11 +63,6 @@ routes.updateProfile = async (req, res) => {
 };
 
 export default routes;
-
-
-
-
-
 
 /*
 

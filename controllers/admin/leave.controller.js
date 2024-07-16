@@ -32,7 +32,7 @@ routes.updateLeaveByEmployee = async (req, res) => {
     if (!employeeId)
       return res.status(400).json({ error: "employee id required" });
     if (!leaveId || !leaveStatus)
-      return res.status(400).json("All field required");
+      return res.status(400).json({ error: "All field required" });
     const leave = await leaveModel.findOneAndUpdate(
       { _id: leaveId, employeeId },
       { leaveStatus },{new:true}

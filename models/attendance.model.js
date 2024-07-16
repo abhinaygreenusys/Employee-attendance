@@ -47,6 +47,10 @@ const attendanceSchema = new Schema(
       },
     },
     attendanceStatus: { type: String },
+    attendanceType: { type: String },  //fullDay halfday
+    attendanceType:{
+         
+    },
     remark: {
       type: String,  //
     },
