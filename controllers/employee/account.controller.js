@@ -5,36 +5,7 @@ import jwt from "jsonwebtoken";
 const routes = {};
 
 routes.register = async (req, res) => {
-  try {
-    const { phone } = req.body;
-    if (!phone) return res.status(400).json({ error: "All field Required" });
-    const emp = await Employee.findOne({ phone });
-    if (!emp?.isVerified) {
-      await Employee.deleteOne(emp);
-    } else {
-      return res.status(400).json({ error: "Employee already exists" });
-    }
-    // if (emp) return res.status(400).json({ error: "Employee already exists" });
-
-    // genrate otp and expire time
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    const expiresIn = new Date().getTime() + 10 * 60 * 1000;
-    
-    // sent otp message
-    sentMessage("9335133803", otp);
-
-    const newEmp = await Employee.create({ phone });
-    newEmp.verificationCode = otp;
-    newEmp.codeExpire = expiresIn;
-    await newEmp.save();
-
-    res
-      .status(201)
-      .json({ result: newEmp, message: "Employee register successfully" });
-  } catch (error) {
-    console.log("error=", error.message);
-    res.status(500).json({ error: "Something went wrong" });
-  }
+    res.send("<h1>Runnnig<h1>")
 };
 
 routes.verifyAccount = async (req, res) => {
@@ -52,7 +23,7 @@ routes.verifyAccount = async (req, res) => {
     const accessToken = emp.generateAccessToken();
     const refreshToken = emp.generateRefreshToken();
     res.status(200).json({
-      result: { accessToken, refreshToken },
+      result: { employee:emp,accessToken,refreshToken},
       message: "Account verified successfully",
     });
   } catch (error) {
@@ -65,10 +36,18 @@ routes.login = async (req, res) => {
   try {
     const { phone } = req.body;
     if (!phone) return res.status(400).json({ error: "All field Required" });
-    const emp = await Employee.findOne({ phone });
-    if (!emp) return res.status(400).json({ error: "Employee not found" });
-    if (!emp.isVerified)
-      return res.status(400).json({ error: "Account not verified" });
+    let emp = await Employee.findOne({ phone });
+      
+    if (!emp) {
+       emp = await Employee.create({ phone });
+    }else{
+      if(!emp.isVerified){
+        await Employee.deleteOne(emp);
+        emp = await Employee.create({ phone });
+      } 
+    }
+    // if (!emp.isVerified)
+      // return res.status(400).json({ error: "Account not verified" });
     // const accessToken = emp.generateAccessToken();
     const otp=Math.floor(100000+Math.random()*900000)
     const expiresIn = new Date().getTime()+10*60*1000

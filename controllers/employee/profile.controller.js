@@ -26,12 +26,14 @@ routes.updateProfile = async (req, res) => {
     const id = req.userId;
     const { email, employeeId } = req.body;
 
+    //bug of mobile nuber in updateProfile if user is already verify the number if user give the number in number key any number then we can not verify the number  
+
     if (email) {
-      const user = await findOne({ email });
+      const user = await Employee.findOne({ email });
       if (user) return res.status(400).json({ error: "Email already exists" });
     }
     if (employeeId) {
-      const user = await findOne({ employeeId });
+      const user = await Employee.findOne({ employeeId });
       if (user)
         return res.status(400).json({ error: "EmployeeId already exists" });
     }
@@ -55,7 +57,10 @@ routes.updateProfile = async (req, res) => {
     user.profilePicture = url;
     await user.save();
 
-    res.status(200).json({ result: user, message: "success" });
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    res.status(200).json({ result:{accessToken,refreshToken}, message: "success" });
   } catch (error) {
     console.log("error=", error.message);
     res.status(500).json({ error: "Something went wrong" });
