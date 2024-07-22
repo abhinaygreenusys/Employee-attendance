@@ -2,31 +2,15 @@ import { Employee } from "../../models/employee.model.js";
 import { deleteFile, uploadFile } from "../../utils/s3.utils.js";
 import { v4 as uuidv4 } from "uuid";
 const routes = {};
-routes.getProfile = async (req, res) => {
-  try {
-    const id = req.userId;
-    const user = await Employee.findById(id, {
-      phone: 1,
-      email:1,
-      employeeId:1,
-      name:1,
-      role:1,
-      profilePicture:1,
-    });
-    if (!user) return res.status(404).json({ error: "Employee not found" });
-    res.status(200).json({ result: user, message: "success" });
-  } catch (error) {
-    console.log("error", error.message);
-    res.status(500).json({ error: "Something went wrong" });
-  }
-};
 
-routes.updateProfile = async (req, res) => {
+routes.createProfile = async (req, res) => {
   try {
+    const { role, email, employeeId, dob, doj, officeLocation } = req.body;
     const id = req.userId;
-    const { email, employeeId } = req.body;
 
-    //bug of mobile nuber in updateProfile if user is already verify the number if user give the number in number key any number then we can not verify the number  
+    if (!role || !email || !employeeId || !dob || !doj || !officeLocation) {
+      return res.status(400).json({ error: "All feild is required" });
+    }
 
     if (email) {
       const user = await Employee.findOne({ email });
@@ -38,7 +22,14 @@ routes.updateProfile = async (req, res) => {
         return res.status(400).json({ error: "EmployeeId already exists" });
     }
 
-    const user = await Employee.findByIdAndUpdate(id, req.body, { new: true });
+    req.body.dob = new Date(req.body.dob);
+    req.body.doj = new Date(req.body.doj);
+
+    const user = await Employee.findByIdAndUpdate(
+      id,
+      { role, email, employeeId, dob, doj, officeLocation },
+      { new: true }
+    );
     if (!user) return res.status(404).json({ error: "Employee not found" });
     let url;
     if (req.files?.length) {
@@ -57,10 +48,68 @@ routes.updateProfile = async (req, res) => {
     user.profilePicture = url;
     await user.save();
 
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
+    res
+      .status(201)
+      .json({ result: user, message: "User Profile Created Successfully" });
+  } catch (error) {
+    console.log("error=", error.message);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+};
 
-    res.status(200).json({ result:{accessToken,refreshToken}, message: "success" });
+routes.getProfile = async (req, res) => {
+  try {
+    const id = req.userId;
+    const user = await Employee.findById(id, {
+      phone: 1,
+      email: 1,
+      employeeId: 1,
+      name: 1,
+      role: 1,
+      profilePicture: 1,
+    });
+    if (!user) return res.status(404).json({ error: "Employee not found" });
+    res.status(302).json({ result: user, message: "success" });
+  } catch (error) {
+    console.log("error", error.message);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+};
+
+routes.updateProfile = async (req, res) => {
+  try {
+    const id = req.userId;
+    const { name, role, dob, officeLocation } = req.body;
+
+    if (req.body.dob) req.body.dob = new Date(req.body.dob);
+
+    const user = await Employee.findByIdAndUpdate(
+      id,
+      { name, role, dob, officeLocation },
+      { new: true }
+    );
+
+    if (!user) return res.status(404).json({ error: "Employee not found" });
+
+    let url;
+    if (req.files?.length) {
+      if (user.profilePicture) {
+        await deleteFile(user.profilePicture);
+      }
+      const file = req.files[0];
+      const data = await uploadFile(
+        file,
+        `user/profilePicture/${uuidv4()}-${file?.originalname}`
+      );
+      url = data.Key;
+    }
+
+    user.profilePicture = url;
+    await user.save();
+
+    res
+      .status(200)
+      .json({ result: user, message: "User Profile update successfully" });
   } catch (error) {
     console.log("error=", error.message);
     res.status(500).json({ error: "Something went wrong" });

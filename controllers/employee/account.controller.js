@@ -8,29 +8,8 @@ routes.register = async (req, res) => {
     res.send("<h1>Runnnig<h1>")
 };
 
-routes.verifyAccount = async (req, res) => {
-  try {
-    const { phone, code } = req.body;
-    if (!phone) return res.status(400).json({ error: "All field Required" });
-    const emp = await Employee.findOne({ phone });
-    if (!emp) return res.status(400).json({ error: "Employee not found" });
-    if (emp.codeExpire < new Date())
-      return res.status(400).json({ error: "Code has been Expired" });
-    if (emp.verificationCode != code)
-      return res.status(400).json({ error: "Invalid Code" });
-    emp.isVerified = true;
-    await emp.save();
-    const accessToken = emp.generateAccessToken();
-    const refreshToken = emp.generateRefreshToken();
-    res.status(200).json({
-      result: { employee:emp,accessToken,refreshToken},
-      message: "Account verified successfully",
-    });
-  } catch (error) {
-    console.log("error=", error.message);
-    res.status().json({ error: "Something went wrong" });
-  }
-};
+
+
 
 routes.login = async (req, res) => {
   try {
@@ -61,6 +40,33 @@ routes.login = async (req, res) => {
     res.status(500).json({ error: "Something went worng" });
   }
 };
+
+
+routes.verifyAccount = async (req, res) => {
+  try {
+    const { phone, code } = req.body;
+    if (!phone) return res.status(400).json({ error: "All field Required" });
+    const emp = await Employee.findOne({ phone });
+    if (!emp) return res.status(400).json({ error: "Employee not found" });
+    if (emp.codeExpire < new Date())
+      return res.status(400).json({ error: "Code has been Expired" });
+    if (emp.verificationCode != code)
+      return res.status(400).json({ error: "Invalid Code" });
+    emp.isVerified = true;
+    await emp.save();
+    const accessToken = emp.generateAccessToken();
+    const refreshToken = emp.generateRefreshToken();
+    res.status(200).json({
+      result: { employee:emp,accessToken,refreshToken},
+      message: "User Register Successfully",
+    });
+  } catch (error) {
+    console.log("error=", error.message);
+    res.status().json({ error: "Something went wrong" });
+  }
+};
+
+
 
 routes.refreshAccessToken = async (req, res) => {
   try {
