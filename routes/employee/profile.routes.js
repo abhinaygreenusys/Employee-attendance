@@ -5,8 +5,8 @@ const upload = multer();
 
 const router = express.Router();
 router
-  .post("/", upload.any(),employeeController.createProfile)
-  .get("/", employeeController.getProfile)
-  .patch("/", upload.any(), employeeController.updateProfile);
+  .post("/createProfile", upload.any(),employeeController.createProfile)
+  .get("/getProfile", employeeController.getProfile)
+  .patch("/updateProfile", upload.any(), employeeController.updateProfile);
 
 export default router;
