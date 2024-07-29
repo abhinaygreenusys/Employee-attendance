@@ -69,7 +69,7 @@ routes.getProfile = async (req, res) => {
       profilePicture: 1,
     });
     if (!user) return res.status(404).json({ error: "Employee not found" });
-    res.status(302).json({ result: user, message: "success" });
+    res.status(200).json({ result: user, message: "success" });
   } catch (error) {
     console.log("error", error.message);
     res.status(500).json({ error: "Something went wrong" });
