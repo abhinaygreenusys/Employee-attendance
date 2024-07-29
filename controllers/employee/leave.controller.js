@@ -9,7 +9,7 @@ routes.createLeave = async (req, res) => {
     if (!leaveType || !startDate || !endDate || !reason)
       return res.status(400).json({ error: "All field required" });
     console.log({ employeeId, ...req.body });
-    const leave = await leaveModel.create({ employeeId, ...req.body });
+    const leave = await leaveModel.create({ empId:employeeId, ...req.body });
     res
       .status(201)
       .json({ result: leave, message: "Leave created succesfully" });

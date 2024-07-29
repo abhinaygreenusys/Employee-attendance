@@ -83,7 +83,7 @@ routes.refreshAccessToken = async (req, res) => {
       { _id: decode },
       _id,
       process.env.JWT_PRIVATE_KEY,
-      {
+      { 
         expiresIn: "1d",
       }
     );

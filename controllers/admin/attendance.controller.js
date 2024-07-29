@@ -4,6 +4,7 @@ import { Attendance } from "../../models/attendance.model.js";
 const routes = {};
 routes.getAttendanceHistoryByEmplyee = async (req, res) => {
   try {
+    console.log("hell")
     const { id } = req.params;
     const { limit = 10, page = 1 } = req.query;
     const skipValue = limit * (page - 1);
@@ -14,7 +15,7 @@ routes.getAttendanceHistoryByEmplyee = async (req, res) => {
     const pipeline = [
       {
         $match: {
-          employeeId: mongoose.Types.ObjectId(id),
+          empId: mongoose.Types.ObjectId(id),
         },
       },
       { 
@@ -78,7 +79,7 @@ routes.getAttendanceHistoryByEmplyee = async (req, res) => {
 
     const attendance = await Attendance.aggregate(pipeline);
 
-    const totalAttendance = await Attendance.countDocuments({ employeeId: id });
+    const totalAttendance = await Attendance.countDocuments({ empId: id });
 
     if (!attendance)
       return res.status(404).json({ error: "No attendance found" });
@@ -101,7 +102,7 @@ routes.getAttendanceHistoryByEmplyee = async (req, res) => {
 routes.getLetestAttendance=async(req,res)=>{
       try{
         const id = req.params.id;
-        const attendance=await Attendance.findOne({employeeId:id}).sort({createdAt:-1});
+        const attendance=await Attendance.findOne({empId:id}).sort({createdAt:-1});
         if(!attendance)
           return res.status(404).json({error:"No attendance found"})
 

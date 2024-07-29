@@ -4,12 +4,12 @@ const routes = {};
 
 routes.getAllLeaveByEmployee = async (req, res) => {
   try {
-    const employeeId = req.params.id;
+    const empId = req.params.id;
     const { limit = 10, page = 1 } = req.query;
-    if (!employeeId)
+    if (!empId)
       return res.status(400).json({ error: "employee id is required" });
     const AllLeaves = await leaveModel
-      .find({ employeeId })
+      .find({ empId })
       .skip(limit * (page - 1))
       .limit(limit);
     if (!AllLeaves.length)
@@ -27,14 +27,14 @@ routes.getAllLeaveByEmployee = async (req, res) => {
 
 routes.updateLeaveByEmployee = async (req, res) => {
   try {
-    const employeeId = req.params.id;
+    const empId = req.params.id;
     const { leaveId, leaveStatus } = req.body;
-    if (!employeeId)
+    if (!empId)
       return res.status(400).json({ error: "employee id required" });
     if (!leaveId || !leaveStatus)
       return res.status(400).json({ error: "All field required" });
     const leave = await leaveModel.findOneAndUpdate(
-      { _id: leaveId, employeeId },
+      { _id: leaveId, empId },
       { leaveStatus },{new:true}
     );
     if (!leave)

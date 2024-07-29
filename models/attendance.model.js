@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const attendanceSchema = new Schema(
   {
-    employeeId: {
+    empId:{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Employee",
       required: true,

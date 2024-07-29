@@ -11,7 +11,7 @@ routes.createAttendance = async (req, res) => {
     if (!longitude || !latitude || !address)
       return res.status(400).json({ message: "All fields are required" });
 
-    const attendance = await Attendance.create({ employeeId, punchIn });
+    const attendance = await Attendance.create({ empId:employeeId, punchIn });
     return res
       .status(201)
       .json({
@@ -26,7 +26,7 @@ routes.createAttendance = async (req, res) => {
 routes.getAllAttendance = async (req, res) => {
   try {
     const employeeId = req.userId;
-    const attendances = await Attendance.find({ employeeId });
+    const attendances = await Attendance.find({ empId:employeeId },{empId:0});
     if (!attendances)
       return res.status(404).json({ message: "No Attendance Found" });
 
@@ -46,7 +46,7 @@ routes.getAttendanceById = async (req, res) => {
   try {
     const employeeId = req.userId;
     const { id } = req.params;
-    const attendance = await Attendance.findOne({ _id: id, employeeId });
+    const attendance = await Attendance.findOne({ _id: id, empId:employeeId },{empId:0});
     if (!attendance)
       return res.status(404).json({ message: "No Attendance Found" });
 
@@ -70,7 +70,7 @@ routes.updateAttendance = async (req, res) => {
     if (!time || !latitude || !longitude || !address)
       return res.status(400).json({ message: "All fields are required" });
     console.log("id=", id);
-    const attendance = await Attendance.findOne({ _id: id, employeeId });
+    const attendance = await Attendance.findOne({ _id: id, empId:employeeId });
     if (!attendance)
       return res.status(404).json({ message: "No Attendance Found" });
 
