@@ -8,9 +8,12 @@ routes.createAttendance = async (req, res) => {
     if (!punchIn)
       return res.status(400).json({ message: "All fields are required" });
     const { longitude, latitude, address } = punchIn;
+    console.log(punchIn)
     if (!longitude || !latitude || !address)
       return res.status(400).json({ message: "All fields are required" });
 
+    punchIn.time=new Date().toISOString()
+    
     const attendance = await Attendance.create({ empId:employeeId, punchIn });
     return res
       .status(201)
@@ -67,8 +70,9 @@ routes.updateAttendance = async (req, res) => {
     if (!punchOut)
       return res.status(400).json({ message: "All fields are required" });
     const { time, latitude, longitude, address } = punchOut;
-    if (!time || !latitude || !longitude || !address)
+    if (!latitude || !longitude || !address)
       return res.status(400).json({ message: "All fields are required" });
+    punchOut.time=new Date().toISOString()
     console.log("id=", id);
     const attendance = await Attendance.findOne({ _id: id, empId:employeeId });
     if (!attendance)
