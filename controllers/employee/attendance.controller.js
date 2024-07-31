@@ -81,7 +81,8 @@ routes.updateAttendance = async (req, res) => {
     const punchInTime = new Date(attendance.punchIn.time);
     const punchOutTime = new Date(punchOut.time);
     console.log((punchOutTime - punchInTime) / 60 / 60 / 1000);
-    if (punchOutTime - punchInTime >= 28800000)
+    
+    if (punchOutTime - punchInTime >= 28800000) // check condition for 8 hours
       attendance.attendanceType = "Full-Day";
     else attendance.attendanceType = "Half-Day";
 
