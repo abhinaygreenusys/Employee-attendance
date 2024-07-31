@@ -29,7 +29,7 @@ routes.createLeave = async (req, res) => {
 routes.getAllLeaves = async (req, res) => {
   try {
     const { userId } = req;
-    const allLeaves = await leaveModel.find({ employeeId: userId });
+    const allLeaves = await leaveModel.find({ empId: userId });
     if (!allLeaves) return res.status(404).json({ error: "Leave not found" });
     res
       .status(200)
@@ -46,7 +46,7 @@ routes.getLeaveById = async (req, res) => {
     const { userId } = req;
     const leave = await leaveModel.findOne({
       _id: leaveId,
-      employeeId: userId,
+      empId: userId,
     });
     if (!leave) return res.status(404).json({ error: "Leave not found" });
     res
