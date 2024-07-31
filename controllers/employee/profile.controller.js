@@ -30,6 +30,11 @@ routes.createProfile = async (req, res) => {
       { role, email, employeeId, dob, doj, officeLocation },
       { new: true }
     );
+
+    const accessToken = user.generateAccessToken();
+
+    const refreshToken = user.generateRefreshToken();
+
     if (!user) return res.status(404).json({ error: "Employee not found" });
     let url;
     if (req.files?.length) {
@@ -50,7 +55,10 @@ routes.createProfile = async (req, res) => {
 
     res
       .status(201)
-      .json({ result: user, message: "User Profile Created Successfully" });
+      .json({
+        result: { employee: user, accessToken, refreshToken },
+        message: "User Profile Created Successfully",
+      });
   } catch (error) {
     console.log("error=", error.message);
     res.status(500).json({ error: "Something went wrong" });
