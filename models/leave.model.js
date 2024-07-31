@@ -9,7 +9,7 @@ const leaveSchema = new Schema(
     },
     leaveType: {
       type: String,
-      enum: ["Sick Leave", "Casual Leave", "Paid Leave", "Unpaid Leave"],
+      enum: ["Sick leave", "Casual leave", "Paid leave", "Unpaid leave"],
       required: true,
     },
     startDate: {
