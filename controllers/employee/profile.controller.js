@@ -5,10 +5,10 @@ const routes = {};
 
 routes.createProfile = async (req, res) => {
   try {
-    const { role, email, employeeId, dob, doj, officeLocation } = req.body;
+    const { name,role, email, employeeId, dob, doj, officeLocation } = req.body;
     const id = req.userId;
 
-    if (!role || !email || !employeeId || !dob || !doj || !officeLocation) {
+    if (!name||!role || !email || !employeeId || !dob || !doj || !officeLocation) {
       return res.status(400).json({ error: "All feild is required" });
     }
 
@@ -27,7 +27,7 @@ routes.createProfile = async (req, res) => {
 
     const user = await Employee.findByIdAndUpdate(
       id,
-      { role, email, employeeId, dob, doj, officeLocation },
+      { name,role, email, employeeId, dob, doj, officeLocation },
       { new: true }
     );
 
