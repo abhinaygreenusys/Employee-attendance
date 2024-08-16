@@ -27,6 +27,7 @@ const attendanceSchema = new Schema(
       },
       required: true,
     },
+
     punchOut: {
       type: {
         time: {
@@ -46,11 +47,22 @@ const attendanceSchema = new Schema(
         }
       },
     },
+    intermediateLocations:{
+          type:[{
+            latitude:{
+              type:String,
+            },
+            longitude:{
+              type:String
+            },
+            address:{
+              type:String
+            }              
+          }],
+          default:[]
+    },
     attendanceStatus: { type: String },
     attendanceType: { type: String },  //fullDay halfday
-    attendanceType:{
-         
-    },
     remark: {
       type: String,  //
     },

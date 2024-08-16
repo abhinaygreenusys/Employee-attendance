@@ -107,7 +107,7 @@ routes.getLetestAttendance=async(req,res)=>{
           return res.status(404).json({error:"No attendance found"})
 
         console.log(attendance)
-
+        
         res.status(200).json({result:attendance,message:"attendance fetched successfully"})
       }catch(error){
         console.log("error=",error.message);

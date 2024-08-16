@@ -7,5 +7,5 @@ router.post("/createAttendance",attendanceController.createAttendance)
       .get("/getAllAttendance",attendanceController.getAllAttendance)
       .get("/getAttendanceById/:id",attendanceController.getAttendanceById)
       .patch("/updateAttendance/:id",attendanceController.updateAttendance)
-
+      .post("/setNewLocation/:attendanceId",attendanceController.setNewLocation)
       export default router
