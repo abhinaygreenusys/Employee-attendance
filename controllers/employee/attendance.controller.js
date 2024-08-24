@@ -121,6 +121,18 @@ routes.setNewLocation = async (req, res) => {
         return res.status(400).json({ error: "Not Valid Attandance" }); 
     }
 
+
+     if (attendance.intermediateLocations.length) {
+    const temp=  attendance.intermediateLocations.find(
+        (location) =>
+          location.latitude != latitude && location.longitude != longitude
+      );
+      if(temp!=0)
+        return res.status(200).json({ message: "New Location is update" });
+    }
+
+    
+
     if(attendance.punchIn && attendance.punchOut){
       return res.status(400).json({ error: "Attendance is marked" });
     }
